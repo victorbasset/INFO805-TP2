@@ -24,7 +24,7 @@ SOURCES = Viewer.cpp ray-tracer.cpp Sphere.cpp
 
 # Exemple de configuration Linux de Qt et libQGLViewer
 INCLUDEPATH *= /usr/include
-LIBS *= -L/usr/lib/x86_64-linux-gnu -lqglviewer-qt5
+LIBS *= -L/usr/lib/x86_64-linux-gnu -lQGLViewer-qt5
 
 # Exemple de configuration MacOSX avec macports
 ## INCLUDEPATH *= /opt/local/include
