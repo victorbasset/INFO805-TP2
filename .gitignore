@@ -1,2 +1,6 @@
 *.pro
 *.o
+*.xml
+*.stash
+ray-tracer
+Makefile
