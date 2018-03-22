@@ -84,26 +84,33 @@ namespace rt {
     {
       Real minDist = -1;
       Point3 pIntersect;
+      bool found = false;
 
-      for(std::vector<GraphicalObject*>::const_iterator it = myObjects.begin(), itE = myObjects.end(); it != itE; ++it) {
+      for(std::vector<GraphicalObject*>::iterator it = myObjects.begin(), itE = myObjects.end(); it != itE; ++it) {
           if((*it)->rayIntersection(ray, pIntersect) < 0) {  
             
-            Vector3 v = p - ray.origin;
+            Vector3 v = pIntersect - ray.origin;
             Real dist = (v).dot(v);
             
             if(minDist == -1){
               minDist = dist;
+              p = pIntersect;
+              object = *(it);
+
+              found = true;
             }
 
             else if(dist < minDist){
               minDist = dist;
               p = pIntersect;
               object = *(it);
+              
+              found = true;
             }
           }
       }
-
-      return -minDist;
+      
+      return found ? -1.0f : 1.0f;
     }
 
   private:

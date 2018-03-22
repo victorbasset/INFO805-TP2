@@ -127,8 +127,14 @@ namespace rt {
       // Look for intersection in this direction.
       Real ri = ptrScene->rayIntersection( ray, obj_i, p_i );
       // Nothing was intersected
-      if ( ri >= 0.0f ) return Color( 0.0, 0.0, 0.0 ); // some background color
-      return Color( 1.0, 1.0, 1.0 );
+      
+      if ( ri >= 0.0f ) return result; // some background color
+      std::cout << p_i[0] << std::endl;
+      Material mat = obj_i->getMaterial(p_i);
+      Color diffuse = mat.diffuse;
+      Color ambiente = mat.ambient;
+      
+      return diffuse + ambiente;
     }
 
   };

@@ -100,9 +100,9 @@ rt::Sphere::rayIntersection( const Ray& ray, Point3& p )
   distPB = w.dot(PA);
 
   dist = PA.dot(PA) - (distPB * distPB);
-
+  
   if(radius * radius < dist) {
-    return dist;
+    return 1.0f;
   } else {
     Real x0, x1, delta;
     delta = 4 * (distPB + radius * radius - dist);
@@ -116,13 +116,13 @@ rt::Sphere::rayIntersection( const Ray& ray, Point3& p )
     }
 
     if(x0 < 0 && x1 < 0) {
-      return dist;
+      return 1.0f;
     } else {
       
       Real min = (x0 < x1) && (x0 > 0) ? x0 : x1;
       p = Point3(min * w + ray.origin);
-
-      return -dist;
+      //std::cout << p[0] << std::endl;
+      return -1.0f;
     }
   }
 }
