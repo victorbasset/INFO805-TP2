@@ -91,38 +91,35 @@ rt::Sphere::getMaterial( Point3 /* p */ )
 rt::Real
 rt::Sphere::rayIntersection( const Ray& ray, Point3& p )
 {
-  Vector3 PA;
-  Real dist, distPB;
+  Vector3 w, PA;
+  Real PA2, PB, AB2;
 
   PA = center - ray.origin;
-  Vector3 w = ray.direction / ray.direction.norm();
+  PA2 = PA.dot(PA);
+  w = ray.direction / ray.direction.norm();
 
-  distPB = w.dot(PA);
+  PB = w.dot(PA);
 
-  dist = PA.dot(PA) - (distPB * distPB);
+  AB2 = PA2 - (PB * PB);
   
-  if(radius * radius < dist) {
+  if(radius * radius < AB2) {
     return 1.0f;
   } else {
-    Real x0, x1, delta;
-    delta = 4 * (distPB + radius * radius - dist);
+    Real diff = sqrt(radius * radius - AB2);
+    Real t1 = (PB - diff);
+    Real t2 = (PB + diff);
 
-    x0 = (-2 + sqrt(delta)) / 2;
-    x1 = (-2 - sqrt(delta)) / 2;
-
-    if(delta == 0) {
-      x0 = -1;
-      x1 = -1;
-    }
-
-    if(x0 < 0 && x1 < 0) {
-      return 1.0f;
-    } else {
-      
-      Real min = (x0 < x1) && (x0 > 0) ? x0 : x1;
-      p = Point3(min * w + ray.origin);
-      //std::cout << p[0] << std::endl;
-      return -1.0f;
+    if( t1 < 0 && t2 < 0 )
+        return 1.0f;
+    if( t1 > 0 && t2 > 0 ) {
+        p = ray.origin + std::min(t1, t2) * w;
+        return -1.0f;
+    } else if( t1 > 0 || t2 > 0 ) {
+        if(t1 < 0 ){ p = ray.origin + t2* w; }
+        else { ray.origin + t1 * w; }
+        return -1.0f;
     }
   }
+
+  return 1.0f;
 }

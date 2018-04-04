@@ -129,14 +129,31 @@ namespace rt {
       // Nothing was intersected
       
       if ( ri >= 0.0f ) return result; // some background color
-      std::cout << p_i[0] << std::endl;
-      Material mat = obj_i->getMaterial(p_i);
-      Color diffuse = mat.diffuse;
-      Color ambiente = mat.ambient;
       
-      return diffuse + ambiente;
+      return illumination(ray, obj_i, p_i);
     }
 
+    /// Calcule l'illumination de l'objet \a obj au point \a p, sachant que l'observateur est le rayon \a ray.
+    Color illumination( const Ray& ray, GraphicalObject* obj, Point3 p ) {
+      Material mat = obj->getMaterial(p);
+      Color result = Color( 0.0, 0.0, 0.0 );
+
+      for(std::vector<Light*>::iterator it = ptrScene->myLights.begin(), itE = ptrScene->myLights.end(); it != itE; ++it) {
+        Vector3 direction = (*it)->direction(ray.direction);
+        Vector3 normal = obj->getNormal(p);
+
+        Real coss = direction.dot(normal) / (direction.norm() * normal.norm());
+        
+        if(coss < 0) coss = 0;
+
+        result += (*it)->color(p) * mat.diffuse * coss;
+        
+      }
+
+      result += mat.ambient;
+
+      return result;
+    }
   };
 
 } // namespace rt
