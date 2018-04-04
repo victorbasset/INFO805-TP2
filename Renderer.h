@@ -133,20 +133,31 @@ namespace rt {
       return illumination(ray, obj_i, p_i);
     }
 
+    Vector3 reflect( const Vector3& W, Vector3 N ) const {
+        return W - 2 * W.dot(N) * N;
+    }
+
     /// Calcule l'illumination de l'objet \a obj au point \a p, sachant que l'observateur est le rayon \a ray.
     Color illumination( const Ray& ray, GraphicalObject* obj, Point3 p ) {
       Material mat = obj->getMaterial(p);
       Color result = Color( 0.0, 0.0, 0.0 );
+      Vector3 V = ray.direction;
 
       for(std::vector<Light*>::iterator it = ptrScene->myLights.begin(), itE = ptrScene->myLights.end(); it != itE; ++it) {
         Vector3 direction = (*it)->direction(ray.direction);
         Vector3 normal = obj->getNormal(p);
+        Vector3 W = reflect(V, normal);
 
-        Real coss = direction.dot(normal) / (direction.norm() * normal.norm());
-        
+        Real coss = normal.dot(direction) / (normal.norm() * direction.norm());
         if(coss < 0) coss = 0;
 
+        Real cossB = W.dot(direction) / (W.norm() * direction.norm());
+        if(cossB < 0) cossB = 0;
+
+        Real spec = std::pow(cossB, mat.shinyness);
+
         result += (*it)->color(p) * mat.diffuse * coss;
+        result += (*it)->color(p) * mat.specular * spec;
         
       }
 
