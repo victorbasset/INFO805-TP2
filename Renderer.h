@@ -13,6 +13,37 @@
 /// Namespace RayTracer
 namespace rt {
 
+  struct Background {
+    virtual Color backgroundColor( const Ray& ray ) = 0;
+  };
+
+  struct MyBackground : public Background {
+    Color backgroundColor( const Ray& ray )
+    {
+      Color result = Color( 0.0, 0.0, 0.0 );
+      Real z = ray.direction[2];
+      if(z < 0.0f) {
+        Real x = -0.5f * ray.direction[ 0 ] / z;
+        Real y = -0.5f * ray.direction[ 1 ] / z;
+        Real d = sqrt( x*x + y*y );
+        Real t = std::min( d, 30.0f ) / 30.0f;
+        x -= floor( x );
+        y -= floor( y );
+
+        if ( ( ( x >= 0.5f ) && ( y >= 0.5f ) ) || ( ( x < 0.5f ) && ( y < 0.5f ) ) )
+          result += (1.0f - t)*Color( 0.2f, 0.2f, 0.2f ) + t * Color( 1.0f, 1.0f, 1.0f );
+        else
+          result += (1.0f - t)*Color( 0.4f, 0.4f, 0.4f ) + t * Color( 1.0f, 1.0f, 1.0f );
+      } else if(z < 0.5f){
+        return Color(1, 1, 1) * (1.0f - z) + Color(0.0,0.0,1.0) * z;
+      } else {
+        return Color(0.0,0.0,1.0) * (1.0f - z) + Color(0.0,0.0,0.0) * z;
+      }
+    
+      return result;
+    }
+  };
+
   inline void progressBar( std::ostream& output,
                            const double currentValue, const double maximumValue)
   {
@@ -50,6 +81,8 @@ namespace rt {
 
     /// The scene to render
     Scene* ptrScene;
+     // On rajoute un pointeur vers un objet Background
+    Background* ptrBackground;
     /// The origin of the camera in space.
     Point3 myOrigin;
     /// (myOrigin, myOrigin+myDirUL) forms a ray going through the upper-left
@@ -68,8 +101,10 @@ namespace rt {
     int myWidth;
     int myHeight;
 
-    Renderer() : ptrScene( 0 ) {}
-    Renderer( Scene& scene ) : ptrScene( &scene ) {}
+    Renderer() : ptrScene( 0 ), ptrBackground(0) {}
+    Renderer( Scene& scene ) : ptrScene( &scene ) {
+      ptrBackground = new MyBackground();
+    }
     void setScene( rt::Scene& aScene ) { ptrScene = &aScene; }
     
     void setViewBox( Point3 origin, 
@@ -120,7 +155,7 @@ namespace rt {
     Color trace( const Ray& ray )
     {
       assert( ptrScene != 0 );
-      Color result = Color( 0.0, 0.0, 0.0 );
+
       GraphicalObject* obj_i = 0; // pointer to intersected object
       Point3           p_i;       // point of intersection
 
@@ -128,13 +163,32 @@ namespace rt {
       Real ri = ptrScene->rayIntersection( ray, obj_i, p_i );
       // Nothing was intersected
       
-      if ( ri >= 0.0f ) return result; // some background color
+      if ( ri >= 0.0f ) return background(ray); // some background color
       
       return illumination(ray, obj_i, p_i);
     }
 
     Vector3 reflect( const Vector3& W, Vector3 N ) const {
         return W - 2 * W.dot(N) * N;
+    }
+
+    // Affiche les sources de lumières avant d'appeler la fonction qui
+    // donne la couleur de fond.
+    Color background( const Ray& ray )
+    {
+      Color result = Color( 0.0, 0.0, 0.0 );
+      for ( Light* light : ptrScene->myLights )
+        {
+          Real cos_a = light->direction( ray.origin ).dot( ray.direction );
+          if ( cos_a > 0.99f )
+            {
+              Real a = acos( cos_a ) * 360.0 / M_PI / 8.0;
+              a = std::max( 1.0f - a, 0.0f );
+              result += light->color( ray.origin ) * a * a;
+            }
+        }
+      if ( ptrBackground != 0 ) result += ptrBackground->backgroundColor( ray );
+      return result;
     }
 
     /// Calcule l'illumination de l'objet \a obj au point \a p, sachant que l'observateur est le rayon \a ray.
