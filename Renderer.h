@@ -35,8 +35,10 @@ namespace rt {
         else
           result += (1.0f - t)*Color( 0.4f, 0.4f, 0.4f ) + t * Color( 1.0f, 1.0f, 1.0f );
       } else if(z < 0.5f){
+        z *= 2;
         return Color(1, 1, 1) * (1.0f - z) + Color(0.0,0.0,1.0) * z;
       } else {
+        z = (z - 0.5f) * 2;
         return Color(0.0,0.0,1.0) * (1.0f - z) + Color(0.0,0.0,0.0) * z;
       }
     
