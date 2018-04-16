@@ -31,8 +31,10 @@ int main(int argc, char** argv)
   // Objects
   Sphere* sphere1 = new Sphere( Point3( 0, 0, 0), 2.0, Material::bronze() );
   Sphere* sphere2 = new Sphere( Point3( 0, 4, 0), 1.0, Material::emerald() );
+  Sphere* sphere3 = new Sphere( Point3( 6, 6, 0), 3.0, Material::whitePlastic() );
   scene.addObject( sphere1 );
   scene.addObject( sphere2 );
+  scene.addObject( sphere3 );
   
   // Instantiate the viewer.
   Viewer viewer;

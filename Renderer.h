@@ -203,6 +203,10 @@ namespace rt {
         Vector3 direction = (*it)->direction(ray.direction);
         Vector3 normal = obj->getNormal(p);
         Vector3 W = reflect(V, normal);
+        Ray rayLight(p, direction);
+        Color light = (*it)->color(p);
+
+        Color shad = shadow(rayLight, light);
 
         Real coss = normal.dot(direction) / (normal.norm() * direction.norm());
         if(coss < 0) coss = 0;
@@ -214,12 +218,39 @@ namespace rt {
 
         result += (*it)->color(p) * mat.diffuse * coss;
         result += (*it)->color(p) * mat.specular * spec;
-        
+
+        result = result * shad;
       }
 
       result += mat.ambient;
 
       return result;
+    }
+
+    Color shadow( const Ray& ray, Color light_color ) {
+      Point3 origin_ray = ray.origin;
+      GraphicalObject* obj_i = 0; // pointer to intersected object
+      Point3           p_i;       // point of intersection
+      
+      while(light_color.max() > 0.003f) {
+        origin_ray += ray.direction * 0.001f;
+
+        Ray rayDecale(origin_ray, ray.direction, ray.depth);
+
+        Real intersect = ptrScene->rayIntersection(rayDecale, obj_i, p_i);
+
+        if(intersect < 0.0f) {
+          Material mat = obj_i->getMaterial(p_i);
+
+          light_color = light_color * mat.diffuse * mat.coef_refraction;
+          
+          origin_ray = p_i;
+        } else {
+          break;
+        }
+      }
+
+      return light_color;
     }
   };
 
