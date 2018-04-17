@@ -157,6 +157,7 @@ namespace rt {
     Color trace( const Ray& ray )
     {
       assert( ptrScene != 0 );
+      Color result = Color( 0.0, 0.0, 0.0 );
 
       GraphicalObject* obj_i = 0; // pointer to intersected object
       Point3           p_i;       // point of intersection
@@ -167,7 +168,16 @@ namespace rt {
       
       if ( ri >= 0.0f ) return background(ray); // some background color
       
-      return illumination(ray, obj_i, p_i);
+      Material m = obj_i->getMaterial(p_i);
+
+      if(ray.depth > 0 && m.coef_reflexion != 0) {
+        Vector3 vec = reflect(ray.direction, obj_i->getNormal(p_i));
+        Ray ray_refl(p_i + vec * 0.001f, vec, ray.depth - 1);
+        Color c_refl = trace(ray_refl);
+        result += c_refl * m.specular * m.coef_reflexion;
+      }
+
+      return result + illumination(ray, obj_i, p_i);
     }
 
     Vector3 reflect( const Vector3& W, Vector3 N ) const {
