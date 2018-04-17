@@ -39,14 +39,21 @@ int main(int argc, char** argv)
   scene.addLight( light1 );
 
   // Objects
-  Sphere* sphere1 = new Sphere( Point3( 0, 0, 0), 2.0, Material::bronze() );
+  Sphere* sphere1 = new Sphere( Point3( 5, 5, 0), 2.0, Material::bronze() );
   Sphere* sphere2 = new Sphere( Point3( 0, 4, 0), 1.0, Material::emerald() );
-  Sphere* sphere3 = new Sphere( Point3( 6, 6, 0), 3.0, Material::whitePlastic() );
+  //Sphere* sphere3 = new Sphere( Point3( 6, 6, 0), 3.0, Material::whitePlastic() );
   scene.addObject( sphere1 );
   scene.addObject( sphere2 );
-  scene.addObject( sphere3 );
+  //scene.addObject( sphere3 );
 
   addBubble( scene, Point3( -5, 4, -1 ), 2.0, Material::glass() );
+  addBubble( scene, Point3( 15, 18, 15 ), 6.0, Material::glass() );
+  addBubble( scene, Point3( 10, 2, 1 ), 2.0, Material::glass() );
+  addBubble( scene, Point3( 8, 8, -1 ), 4.0, Material::glass() );
+  addBubble( scene, Point3( 0, 16, -30 ), 3.0, Material::glass() );
+  addBubble( scene, Point3( 5, 5, 0 ), 4.0, Material::glass() );
+  addBubble( scene, Point3( 19, 2, 10 ), 3.0, Material::glass() );
+  addBubble( scene, Point3( 21, 12, 18 ), 5.0, Material::glass() );
   
   // Instantiate the viewer.
   Viewer viewer;

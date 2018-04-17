@@ -286,6 +286,12 @@ namespace rt {
 
       Vector3 refract = r * aRay.direction + (r * c + (c > 0 ? - 1.0f : 1.0f) * sqrt(1 - r * r * (1 - c * c))) * N;
 
+      // Si l'angle formé entre la direction du rayon et la normal de la sphère au point d'intersection est inférieur à un  
+      // certain angle (dépend du matériel traversé par la lumière), il n'y a pas de réfraction mais une réflexion
+      if(1 - (r * r) * (1 - c * c) < 0) {
+        refract = reflect(aRay.direction, N);
+      }
+
       return Ray(p + refract * 0.01f, refract, aRay.depth - 1);
     }
   };
