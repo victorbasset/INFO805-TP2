@@ -177,7 +177,19 @@ namespace rt {
         result += c_refl * m.specular * m.coef_reflexion;
       }
 
-      return result + illumination(ray, obj_i, p_i);
+      if(ray.depth > 0 && m.coef_refraction != 0) {
+        Ray ray_refr = refractionRay(ray, p_i, obj_i->getNormal(p_i), m);
+        Color c_refr = trace(ray_refr);
+        result += c_refr * m.diffuse * m.coef_refraction;
+      }
+
+      Color illu = illumination(ray, obj_i, p_i);
+
+      if(ray.depth != 0) {
+        illu = illu * obj_i->getMaterial(p_i).coef_diffusion;
+      }
+
+      return result + illu;
     }
 
     Vector3 reflect( const Vector3& W, Vector3 N ) const {
@@ -261,6 +273,20 @@ namespace rt {
       }
 
       return light_color;
+    }
+    
+
+    Ray refractionRay( const Ray& aRay, const Point3& p, Vector3 N, const Material& m ) {
+      Real r = m.in_refractive_index / m.out_refractive_index;
+      Real c = - N.dot(aRay.direction);
+
+      if(aRay.direction.dot(N) <= 0) {
+        r = 1.0f / r;
+      }
+
+      Vector3 refract = r * aRay.direction + (r * c + (c > 0 ? - 1.0f : 1.0f) * sqrt(1 - r * r * (1 - c * c))) * N;
+
+      return Ray(p + refract * 0.01f, refract, aRay.depth - 1);
     }
   };
 
