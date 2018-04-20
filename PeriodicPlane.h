@@ -20,8 +20,8 @@ namespace rt {
                   };
 
     void coordinates( Point3 p, Real& x, Real& y) {
-      x = u[0] + p[0];
-      y = u[0] + p[1];
+      x = u[0] + v[0] + p[0];
+      y = u[1] + v[1] + p[1];
     }
 
     void init( Viewer& /* viewer */ ) {}
@@ -52,25 +52,31 @@ namespace rt {
       Real px, py;
       coordinates(p, px, py);
       
-      return ((int) px == (int) (px + w)) || ((int) py == (int) (py + w)) ? main_m : band_m;
+      return ((int) px == (int) (px + w)) && ((int) py == (int) (py + w)) ? main_m : band_m;
     }
 
     Real rayIntersection( const Ray& ray, Point3& p ) {
       Vector3 n = getNormal(c) / getNormal(c).norm();
       Vector3 w = ray.direction / ray.direction.norm();
-      Real wn = w.dot(n);
+      Real nw = n.dot(w);
       Real tmp;
+      Vector3 n0w0 = c - ray.origin;
+    
+      if(nw == 0) {
+        if(n.dot(n0w0) == 0) {
+          tmp = 0;
+          p = ray.origin + w * tmp;
 
-      if(wn > 0.0000001f) {
-        Vector3 n0w0 = (c - ray.origin) / (c - ray.origin).norm();
-        tmp = n.dot(n0w0) / wn;
-
+          return -1.0f;
+        } else {
+          return 1.0f;
+        }
+      } else {
+        tmp = n0w0.dot(n) / nw;
         p = ray.origin + w * tmp;
-        
-        return tmp >= 0 ? -1.0f : 1.0f;
-      } 
+      }
       
-      return 1.0f;
+      return tmp >=0 ? -1.0f : 1.0f;
     }
   
   public:
