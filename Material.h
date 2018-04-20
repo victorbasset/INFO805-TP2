@@ -77,7 +77,7 @@ namespace rt {
       m.specular  = Color( 1.0, 1.0, 0.98 );
       m.shinyness = 5.0;
       m.coef_diffusion  = 0.9f;
-      m.coef_reflexion  = 0.1f;
+      m.coef_reflexion  = 0.0f;
       m.coef_refraction = 0.0f;
       m.in_refractive_index  = 1.0f;
       m.out_refractive_index = 1.0f;
