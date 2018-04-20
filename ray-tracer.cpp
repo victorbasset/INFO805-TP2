@@ -8,6 +8,7 @@
 #include "Sphere.h"
 #include "Material.h"
 #include "PointLight.h"
+#include "PeriodicPlane.h"
 
 using namespace std;
 using namespace rt;
@@ -38,13 +39,17 @@ int main(int argc, char** argv)
   scene.addLight( light0 );
   scene.addLight( light1 );
 
+  // Un sol noir et blanc
+  PeriodicPlane* pplane = new PeriodicPlane( Point3( 0, 0, 0 ), Vector3( 5, 0, 0 ), Vector3( 0, 5, 0 ),
+      Material::whitePlastic(), Material::redPlastic(), 0.05f );
+
   // Objects
   Sphere* sphere1 = new Sphere( Point3( 5, 5, 0), 2.0, Material::bronze() );
   Sphere* sphere2 = new Sphere( Point3( 0, 4, 0), 1.0, Material::emerald() );
   //Sphere* sphere3 = new Sphere( Point3( 6, 6, 0), 3.0, Material::whitePlastic() );
   scene.addObject( sphere1 );
   scene.addObject( sphere2 );
-  //scene.addObject( sphere3 );
+  scene.addObject( pplane );
 
   addBubble( scene, Point3( -5, 4, -1 ), 2.0, Material::glass() );
   addBubble( scene, Point3( 15, 18, 15 ), 6.0, Material::glass() );
@@ -66,6 +71,7 @@ int main(int argc, char** argv)
   // Make the viewer window visible on screen.
   viewer.show();
   // Run main loop.
+
   application.exec();
   return 0;
 }
