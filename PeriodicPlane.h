@@ -1,4 +1,5 @@
 #include "GraphicalObject.h"
+#include <math.h>       /* modf */
 
 /// Namespace RayTracer
 namespace rt {
@@ -51,8 +52,14 @@ namespace rt {
     Material getMaterial( Point3 p ) {
       Real px, py;
       coordinates(p, px, py);
-      
-      return ((int) px == (int) (px + w)) && ((int) py == (int) (py + w)) ? main_m : band_m;
+
+            
+      Real fractPartPx, fractPartPy, intPartPx, intPartPy;
+
+      fractPartPx = modf(px, &intPartPx);
+      fractPartPy = modf(py, &intPartPy);
+
+      return (abs(fractPartPx) <= w/2 || abs(fractPartPx) >= 1 - w/2) || (abs(fractPartPy) <= w/2 || abs(fractPartPy) >= 1 - w/2) ? band_m : main_m;
     }
 
     Real rayIntersection( const Ray& ray, Point3& p ) {
