@@ -29,17 +29,17 @@ namespace rt {
     void draw( Viewer& /* viewer */ ) {
       glBegin( GL_TRIANGLES );
       glColor3f(0.5, 0, 0);
-      glVertex3f(300.0, 210.0, 100.0);
-      glVertex3f(340.0, 215.0, 270.0);
-      glVertex3f(320.0, 290.0, 200.0);
+      glVertex3f(-1000.0, -1000.0, 0.0);
+      glVertex3f(-1000.0, 1000.0, 0.0);
+      glVertex3f(1000.0, -1000.0, 0.0);
 
       glEnd();
 
       glBegin( GL_TRIANGLES );
       glColor3f(0, 0.5, 0);
-      glVertex3f(100.0, 180.0, 100.0);
-      glVertex3f(140.0, 115.0, 200.0);
-      glVertex3f(120.0, 190.0, 100.0);
+      glVertex3f(-1000.0, 1000.0, 0.0);
+      glVertex3f(1000.0, 1000.0, 0.0);
+      glVertex3f(1000.0, -1000.0, 0.0);
 
       glEnd();
     }
@@ -49,25 +49,28 @@ namespace rt {
     }
 
     Material getMaterial( Point3 p ) {
-      return ((int) p[0] == (int) (p[0] + 0.1f)) || ((int) p[1] == (int) (p[1] + 0.1f)) ? band_m : main_m;
+      Real px, py;
+      coordinates(p, px, py);
+      
+      return ((int) px == (int) (px + w)) || ((int) py == (int) (py + w)) ? main_m : band_m;
     }
 
     Real rayIntersection( const Ray& ray, Point3& p ) {
-      Real wn = ray.direction.dot(u);
+      Vector3 n = getNormal(c) / getNormal(c).norm();
+      Vector3 w = ray.direction / ray.direction.norm();
+      Real wn = w.dot(n);
       Real tmp;
 
-      if(wn == 0) {
-        if(u.dot(p - ray.origin) == 0) {
-          tmp = 0;
-          return -1.0f;
-        } else {
-          return 1.0f;
-        }
-      } else {
-        tmp = u.dot(p - ray.origin) / wn;
-      }
+      if(wn > 0.0000001f) {
+        Vector3 n0w0 = (c - ray.origin) / (c - ray.origin).norm();
+        tmp = n.dot(n0w0) / wn;
 
-      return tmp >= 0 ? -1.0f : 1.0f;
+        p = ray.origin + w * tmp;
+        
+        return tmp >= 0 ? -1.0f : 1.0f;
+      } 
+      
+      return 1.0f;
     }
   
   public:
