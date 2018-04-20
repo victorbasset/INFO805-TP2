@@ -21,7 +21,7 @@ namespace rt {
 
     void coordinates( Point3 p, Real& x, Real& y) {
       x = u[0] + p[0];
-      y = u[0] + p[1];
+      y = u[1] + p[1];
     }
 
     void init( Viewer& /* viewer */ ) {}
@@ -52,7 +52,7 @@ namespace rt {
       Real px, py;
       coordinates(p, px, py);
       
-      return ((int) px == (int) (px + w)) || ((int) py == (int) (py + w)) ? main_m : band_m;
+      return ((int) px == (int) (px + w)) && ((int) py == (int) (py + w)) ? main_m : band_m;
     }
 
     Real rayIntersection( const Ray& ray, Point3& p ) {
