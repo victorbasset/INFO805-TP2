@@ -63,6 +63,26 @@ namespace rt {
       return tmp;
     }
 
+      // Operations between colors
+    Color operator/( Real v ) const
+    {
+      Color tmp( *this );
+      tmp.my_channels[ 0 ] /= v;
+      tmp.my_channels[ 1 ] /= v;
+      tmp.my_channels[ 2 ] /= v;
+      return tmp;
+    }
+
+    // Operations between colors
+    Color operator/( Color other ) const
+    {
+      Color tmp( *this );
+      tmp.my_channels[ 0 ] /= other.my_channels[ 0 ];
+      tmp.my_channels[ 1 ] /= other.my_channels[ 1 ];
+      tmp.my_channels[ 2 ] /= other.my_channels[ 2 ];
+      return tmp;
+    }
+
     // Operations between colors
     Color operator+( Color other ) const
     {
