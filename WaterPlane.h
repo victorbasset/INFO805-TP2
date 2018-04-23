@@ -1,5 +1,6 @@
 #include "GraphicalObject.h"
 #include <math.h>       /* modf */
+#include "Wave.hpp"
 
 /// Namespace RayTracer
 namespace rt {
@@ -21,11 +22,14 @@ namespace rt {
       this->lambda = lambda;
       this->phase = phase;
 
-      direction = Vector2(
-            u[0] * cos(propagation) + u[1] * sin(propagation), 
-            -u[0] * sin(propagation) + u[1] * cos(propagation)
-        );
-        std::cout << sin(propagation) << std::endl;
+
+      addWave(0.9f,3.2f,2.4f,0.0f);
+      addWave(0.24f,2.4f,0.8f,0.0f);
+
+      addWave(0.69f,1.1f,1.31f,0.0f);
+      addWave(0.11f,0.54f,0.52f,0.0f);
+      addWave(0.76f,1.69f,1.6f,0.0f);
+
     };
 
     void coordinates( Point3 p, Real& x, Real& y) {
@@ -56,13 +60,20 @@ namespace rt {
     Vector3 getNormal( Point3 p ) {
         Vector3 vx = u;
         Vector3 vy = v;
-
-        Real txy = p[0] * cos(propagation) + p[1] * sin(propagation);
-        Real fxy = (2 * M_PI * txy) / lambda + phase;
+        Real x,y;
             
-        for(int i = 0; i < 20; ++i) {
-            vx += Vector3(1, 0, -(2 * M_PI * amplitude * cos(propagation) * sin(fxy))/lambda);
-            vy += Vector3(0, 1, -(2 * M_PI * amplitude * sin(propagation) * sin(fxy))/lambda);
+        for(int i = 0; i < waveList.size(); ++i) {
+          Real ph = waveList.at(i).phase;;
+          Real a = waveList.at(i).a;
+          Real r = waveList.at(i).r;
+          Real l = waveList.at(i).l;
+          Real txy = p[0] * cos(a) + p[1] * sin(a);
+          Real fxy = (2 * M_PI * txy) / l + ph;
+
+          if(txy != 0.0f) ph = 0.0f;
+
+          vx += Vector3(1, 0, -(2 * M_PI * r * cos(a) * sin(fxy))/l);
+          vy += Vector3(0, 1, -(2 * M_PI * r * sin(a) * sin(fxy))/l);
         }
 
         Vector3 normal = vx.cross(vy);
@@ -97,6 +108,10 @@ namespace rt {
       
       return tmp >=0 ? -1.0f : 1.0f;
     }
+
+    void addWave (Real r, Real a, Real l, Real phase){
+      waveList.push_back(Wave(r,a,l,phase));
+    }
   
   public:
     Point3 c;
@@ -104,5 +119,6 @@ namespace rt {
     Vector2 direction;
     Material main_m;
     Real amplitude, propagation, lambda, phase;
+    std::vector<Wave> waveList;
   };
 }
