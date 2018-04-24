@@ -19,6 +19,7 @@ namespace rt {
     virtual Color backgroundColor( const Ray& ray ) = 0;
   };
 
+  //Ciel orangé -> violet (couché de soleil)
   struct MyBackground : public Background {
     Color backgroundColor( const Ray& ray )
     {
@@ -38,10 +39,10 @@ namespace rt {
           result += (1.0f - t)*Color( 0.4f, 0.4f, 0.4f ) + t * Color( 1.0f, 1.0f, 1.0f );
       } else if(z < 0.5f){
         z *= 2;
-        return Color(1, 1, 1) * (1.0f - z) + Color(0.0,0.0,1.0) * z;
+        return Color(0.968,0.462,0.0) * (1.0f - z) + Color(0.474,0.08,0.145) * z;
       } else {
         z = (z - 0.5f) * 2;
-        return Color(0.0,0.0,1.0) * (1.0f - z) + Color(0.0,0.0,0.0) * z;
+        return Color(0.474,0.08,0.145)  * (1.0f - z) + Color(0.133,0.04,0.196) * z;
       }
     
       return result;

@@ -97,6 +97,21 @@ namespace rt {
       m.out_refractive_index = 1.0f;
       return m;
     }
+
+    static Material sand() 
+    {
+      Material m;
+      m.ambient   = Color( 0.018, 0.008, 0.055  );
+      m.diffuse   =  Color( 0.50, 0.223, 0.05 );
+      m.specular  = Color( 0.40, 0.123, 0.05 );
+      m.shinyness = 0.0;
+      m.coef_diffusion  = 0.5f;
+      m.coef_reflexion  = 0.05f;
+      m.coef_refraction = 0.0f;
+      m.in_refractive_index  = 1.0f;
+      m.out_refractive_index = 1.0f;
+      return m;
+    }
     static Material bronze() 
     {
       Material m;
@@ -126,16 +141,44 @@ namespace rt {
       m.out_refractive_index = 1.0f;
       return m;
     }
+    static Material mirror() 
+    {
+      Material m;
+      m.ambient   = Color( 1.0f, 1.0f, 1.0f );
+      m.diffuse   = Color( 1.0, 1.0, 1.0 );
+      m.specular  = Color( 1.0, 1.0, 1.0 );
+      m.shinyness = 0.0;
+      m.coef_diffusion  = 0.0f;
+      m.coef_reflexion  = 1.0f;
+      m.coef_refraction = 0.0f;
+      m.in_refractive_index  = 1.5f;
+      m.out_refractive_index = 1.0f;
+      return m;
+    }
     static Material glass() 
     {
       Material m;
       m.ambient   = Color( 0.0, 0.0, 0.0 );
       m.diffuse   = Color( 0.95, 0.95, 1.0 );
       m.specular  = Color( 1.0, 1.0, 1.0 );
-      m.shinyness = 80.0f;
-      m.coef_diffusion  = 0.01f;
-      m.coef_reflexion  = 0.05f;
+      m.shinyness = 100.0f;
+      m.coef_diffusion  = 0.00f;
+      m.coef_reflexion  = 0.00f;
       m.coef_refraction = 0.98f;
+      m.in_refractive_index  = 1.5f;
+      m.out_refractive_index = 1.0f;
+      return m;
+    }
+    static Material fullRefrac() 
+    {
+      Material m;
+      m.ambient   = Color( 0.0, 0.0, 0.0 );
+      m.diffuse   = Color( 1.0, 1.0, 1.0 );
+      m.specular  = Color( 1.0, 1.0, 1.0 );
+      m.shinyness = 100.0f;
+      m.coef_diffusion  = 0.00f;
+      m.coef_reflexion  = 0.00f;
+      m.coef_refraction = 1.00f;
       m.in_refractive_index  = 1.5f;
       m.out_refractive_index = 1.0f;
       return m;

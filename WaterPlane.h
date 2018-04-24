@@ -23,13 +23,8 @@ namespace rt {
       this->phase = phase;
 
 
-      addWave(0.9f,3.2f,2.4f,0.0f);
-      addWave(0.24f,2.4f,0.8f,0.0f);
-
-      addWave(0.69f,1.1f,1.31f,0.0f);
-      addWave(0.11f,0.54f,0.52f,0.0f);
-      addWave(0.76f,1.69f,1.6f,0.0f);
-
+      addWave(0.9f,10.2f,6.4f,0.0f);
+      addWave(0.1f,1.0f,6.0f,0.0f);
     };
 
     void coordinates( Point3 p, Real& x, Real& y) {
@@ -60,9 +55,8 @@ namespace rt {
     Vector3 getNormal( Point3 p ) {
         Vector3 vx = u;
         Vector3 vy = v;
-        Real x,y;
             
-        for(int i = 0; i < waveList.size(); ++i) {
+        for(int i = 0; i < (int) waveList.size(); ++i) {
           Real ph = waveList.at(i).phase;;
           Real a = waveList.at(i).a;
           Real r = waveList.at(i).r;
@@ -82,6 +76,8 @@ namespace rt {
     }
 
     Material getMaterial( Point3 p ) {
+      //use p (anti warning)
+      p = p;
       return main_m;
     }
 
